@@ -1,33 +1,46 @@
 states = {}
 target = 0
-steps = -1
 
 
 def run():
-    print("Starting")
     read_input()
-
-    print("Searching for solution")
-    print(search())
+    print(search(0, 0))
 
 
 def read_input():
     global target
-    print("Reading input")
     state_array = [2,5] # TODO: pass in state array from file
-    target = 8 # TODO: pass in target water unit from file
+    target = 3 # TODO: pass in target water unit from file
     set_states(state_array)
 
 
 def set_states(state_array):
     global states
-    print("Setting states")
     # TODO: create state memory object to include state costs and expanded states
+    states = [
+        {
+            "value": 2,
+            "cost": 1
+        },
+        {
+            "value": 3,
+            "cost": 2
+        },
+        {
+            "value": 5,
+            "cost": 1
+        }
+    ]
 
 
-def search():
-    # TODO: implement A*
-    return steps
+def search(inf_bucket_volume, steps):
+    for state in states:
+        # The goal is to reach 0, meaning the difference between our target and actual is 0.
+        # Thus the state with the closest value to 0 is chosen as the best path.
+        heuristic = (target - (state['value'] + inf_bucket_volume)) * state['cost']
+
+        if heuristic == 0:
+            return steps + state['cost']
 
 
 run()
