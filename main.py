@@ -53,7 +53,6 @@ def search(inf_bucket_volume, steps):
     # Calculate heuristic for each sibling "leaf" of a "branch" to see which one to expand
     for state in states:
         # The goal is to reach 0, meaning the difference between our target and actual is 0.
-        # Thus the state with the closest value to 0 is chosen as the best path.
         heuristic = (target - (state['value'] + inf_bucket_volume)) * state['cost']
         state_to_heuristic_maps.append(
             {
@@ -76,15 +75,21 @@ def search(inf_bucket_volume, steps):
             search(inf_bucket_volume + mapping['value'], steps + mapping['cost'])
 
 
-print("Target: 1")
-run(1)
-print("Target: 2")
-run(2)
-print("Target: 3")
-run(3)
-print("Target: 4")
-run(4)
-print("Target: 5")
-run(5)
-print("Target: 8")
-run(8)
+t = 1
+print("Target: "+str(t)+", Buckets: 2,5")
+run(t)
+t = 2
+print("Target: "+str(t)+", Buckets: 2,5")
+run(t)
+t = 3
+print("Target: "+str(t)+", Buckets: 2,5")
+run(t)
+t = 4
+print("Target: "+str(t)+", Buckets: 2,5")
+run(t)
+t = 5
+print("Target: "+str(t)+", Buckets: 2,5")
+run(t)
+t = 8
+print("Target: "+str(t)+", Buckets: 2,5")
+run(t)
