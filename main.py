@@ -70,9 +70,10 @@ def search(inf_bucket_volume, steps):
             cost = steps + mapping['cost']
             if lowest_cost is None or cost < lowest_cost:
                 lowest_cost = cost
-            return
+            continue
         else:  # Branch a new set of child leaves and continue to approach goal
-            search(inf_bucket_volume + mapping['value'], steps + mapping['cost'])
+            if lowest_cost is None or (steps + mapping['cost']) < lowest_cost:
+                search(inf_bucket_volume + mapping['value'], steps + mapping['cost'])
 
 
 t = 1
