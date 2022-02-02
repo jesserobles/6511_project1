@@ -1,23 +1,4 @@
 from typing import List, Tuple
-import itertools
-from operator import itemgetter
-
-def simple_heuristic(state: Tuple[int], target: int) -> int:
-    return abs(sum(state) - target) 
-​
-def complicated_heuristic(state: Tuple[int], target: int) -> int:
-    target_bucket_current = state[-1]
-    delta = target - target_bucket_current
-    if delta == 0: # This means we're at the solution, break early
-        return 0
-    if delta > 0: # Case when delta is positive, we need to add to target bucket
-        subset_sums = [seq for i in range(len(state), 0, -1)
-          for seq in itertools.combinations(state, i)
-          if sum(seq) <= delta and not 0 in seq]
-        if subset_sums: # Means that there is a subset whose sum is <= delta. How should we incorporate how close we are?
-            index, element = max(enumerate(subset_sums), key=itemgetter(1))
-            return abs(sum(element) - delta) * len(element) + 1
-    return abs(sum(state) - target)
 
 
 def get_child_states(state: Tuple[int], capacities=Tuple[int]) -> List[Tuple[int]]:
@@ -58,30 +39,3 @@ def get_child_states(state: Tuple[int], capacities=Tuple[int]) -> List[Tuple[int
                     seen_child_states.add(tmp_state)
                     child_states.append(tmp_state)
     return child_states
-
-def test_get_child_states(state, capacities, known_states):
-    return set(known_states) == set(get_child_states(state, capacities))
-
-
-# Tests
-capacities = (2, 5, None)
-
-state = (0, 0, 0)
-known_states = [(2, 0, 0), (0, 5, 0)]
-assert test_get_child_states(state, capacities, known_states)
-
-state = (0, 5, 0)
-known_states = [(2, 5, 0), (2, 3, 0), (0, 0, 5), (0, 0, 0)]
-assert test_get_child_states(state, capacities, known_states)
-
-state = (2, 0, 0)
-known_states = [(0,0,0), (0,2,0), (0,0,2), (2,5,0)]
-assert test_get_child_states(state, capacities, known_states)
-
-state = (2, 5, 0)
-known_states = [(0,5,0), (2,0,0), (0,5,2), (2,0,5)]
-assert test_get_child_states(state, capacities, known_states)
-
-state = (2, 3, 5)
-known_states = [(0,3,5), (2,0,5), (2, 3, 0), (0,5,5), (0,3,7), (2, 0, 8), (2,5,3), (2,5,5)]
-assert test_get_child_states(state, capacities, known_states)
