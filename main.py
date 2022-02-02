@@ -10,7 +10,7 @@ def run():
 def read_input():
     global target
     state_array = [2,5] # TODO: pass in state array from file
-    target = 3 # TODO: pass in target water unit from file
+    target = 1 # TODO: pass in target water unit from file
     set_states(state_array)
 
 
@@ -39,8 +39,10 @@ def search(inf_bucket_volume, steps):
         # Thus the state with the closest value to 0 is chosen as the best path.
         heuristic = (target - (state['value'] + inf_bucket_volume)) * state['cost']
 
-        if heuristic == 0:
+        if heuristic == 0:  # Valid solution
             return steps + state['cost']
+        elif heuristic < 0:  # Dead end, this bucket is larger than needed volume
+            return -1
 
 
 run()
