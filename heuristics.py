@@ -3,7 +3,7 @@ import itertools
 from operator import itemgetter
 
 def simple_heuristic(state: Tuple[int], target: int) -> int:
-    return abs(sum(state) - target) 
+    return abs(state[-1] - target)
 
 def complicated_heuristic(state: Tuple[int], target: int) -> int:
     target_bucket_current = state[-1]
