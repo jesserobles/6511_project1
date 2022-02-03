@@ -26,6 +26,14 @@ from states import get_child_states
 def is_goal(state, target):
     return simple_heuristic(state.state, target) == 0
 
+def parse_file(filename):
+    with open(filename, "r") as file:
+        text = file.read()
+    buckets, target = text.split("\n")
+    buckets = [int(b) for b in buckets.split(",")]
+    target = int(target)
+    return tuple(buckets + [None]), target
+
 
 class State:
     def __init__(self, state: Tuple[int], capacities: Tuple[int], path: List=None) -> None:
@@ -60,16 +68,24 @@ class State:
 
 pq = PriorityQueue()
 capacities = (2, 5, None)
-target = 8
+target = 6
 start = State((0, 0, 0), capacities)
 pq.put((0, start))
 visited = set()
 
+solution = -1
+max_iterations = 10000
+count = 0
+
 while not pq.empty():
+    count += 1
+    if count >= max_iterations:
+        break
     state = pq.get()[1]
     print(f"state: {state}")
     if is_goal(state, target):
         print(f"Found: {state}")
+        solution = state.cost
         break
     for st in state.get_child_states():
         if not st.state in visited:
@@ -80,6 +96,6 @@ while not pq.empty():
     visited.add(state.state)
     
     
-    
+print(solution)
 
 
