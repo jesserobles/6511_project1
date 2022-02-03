@@ -66,17 +66,22 @@ class State:
         return children
 
 
-pq = PriorityQueue()
-capacities = (2, 5, None)
-target = 6
-start = State((0, 0, 0), capacities)
-pq.put((0, start))
+
+# capacities = (2, 5, None)
+# target = 100
+# start = State((0, 0, 0), capacities)
+
+capacities, target = parse_file('input4.txt')
+start = State((0,)*len(capacities), capacities)
+
 visited = set()
 
 solution = -1
 max_iterations = 10000
 count = 0
 
+pq = PriorityQueue()
+pq.put((0, start))
 while not pq.empty():
     count += 1
     if count >= max_iterations:
