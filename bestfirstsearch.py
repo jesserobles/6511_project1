@@ -1,30 +1,73 @@
-"""
-Best-First-Search(Graph g, Node start)
-    1) Create an empty PriorityQueue
-       PriorityQueue pq;
-    2) Insert "start" in pq.
-       pq.insert(start)
-    3) Until PriorityQueue is empty
-          u = PriorityQueue.DeleteMin
-          If u is the goal
-             Exit
-          Else
-             Foreach neighbor v of u
-                If v "Unvisited"
-                    Mark v "Visited"                    
-                    pq.insert(v)
-             Mark u "Examined"                    
-End procedure
-"""
-
+from datetime import timedelta
+import itertools
+from operator import itemgetter
 from queue import PriorityQueue
-from typing import List, Tuple
+import sys
+from time import time
+from typing import List, Tuple, Callable
 
-from heuristics import simple_heuristic
+from heuristics import simple_heuristic, complicated_heuristic
 from states import get_child_states
 
+def bfs(*args):
+    return 1
+
+def subset_sum(numbers, target):
+    result = [seq for i in range(len(numbers), 0, -1)
+          for seq in itertools.combinations(numbers, i)
+          if not 0 in seq and sum(seq) <= target]
+    
+    return result
+
+def get_max_subset(numbers, target):
+    subsets = subset_sum(numbers, target)
+    if not subsets:
+        return None
+    index, element = max(enumerate(map(sum, subsets)), key=itemgetter(0))
+    return subsets[index]
+
+def h(state: Tuple[int], capacities: Tuple[int], target: int) -> int:
+    bt = state[-1]
+    delta = target - bt
+    water_available = sum(state[:-1])
+    if delta == 0: # Solution
+        return 0
+    if delta < 0: 
+        # The target bucket is above the value.
+        # Best case is that a bucket has the correct amount missing and we pour the infinite bucket back
+        # But a smarter approach is to check if any value has such capacity. If not, then
+        # we need at least 2 pours: 1 to empty a destination bucket, and another from
+        # the infinite bucket to the destination.
+        if all([st - cap != delta for st, cap in zip(state[:-1], capacities[:-1])]):
+            return 2
+        return 1
+    if delta > water_available:
+        # The water needed exceeds the amount available in the non-infinite buckets.
+        # then the best case is that a we can pour a bucket to bt, refill a bucket, and pour to bt
+        return 3
+    # Default case is when there is water available to fill the bucket.
+    # Best case is that there is a single bucket with exactly the amount needed.
+    # A smarter approach is 
+    max_subset = get_max_subset(state[:-1], delta)
+    if max_subset:
+        print(f"State: {state}, Used subset {max_subset}")
+        result = max(len(max_subset), 1)
+        return result
+    return 1
+
+def closest(lst, k):
+    highest_value = 0
+    highest_index = -1
+    for ix, item in enumerate(lst):
+        if item > k:
+            continue
+        if item > highest_value:
+            highest_index = ix
+    return lst[highest_index]
+
 def is_goal(state, target):
-    return simple_heuristic(state.state, target) == 0
+    return state.state[-1] == target
+    # return simple_heuristic(state.state, target) == 0
 
 def parse_file(filename):
     with open(filename, "r") as file:
@@ -66,41 +109,48 @@ class State:
         return children
 
 
+class Search:
+    def __init__(self, capacities: Tuple[int], heuristic: Callable) -> None:
+        self.capacities = capacities
+        self.heuristic = heuristic
+        self.visited = set()
+        self.pq = PriorityQueue()
+        self.pq.put((0, State((0,)*len(capacities), self.capacities)))
 
-# capacities = (2, 5, None)
-# target = 100
-# start = State((0, 0, 0), capacities)
+    def search(self, timeout=None, max_iterations=None):
+        solution = -1
+        start = time()
+        iter_count = 0
+        while not self.pq.empty():
+            iter_count += 1
+            if timeout and time() - start > timeout:
+                break
+            if max_iterations and iter_count > max_iterations:
+                break
+            state = self.pq.get()[1]
+            # print(f"state: {state}")
+            if is_goal(state, target):
+                print(f"Found: {state.path}")
+                solution = state.cost
+                break
+            for st in state.get_child_states():
+                if not st.state in self.visited:
+                    self.visited.add(st.state)
+                    h = self.heuristic(st.state, self.capacities, target)
+                    cost = h + st.cost
+                    self.pq.put((cost, st))
+            self.visited.add(state.state)
+        return solution
 
-capacities, target = parse_file('input4.txt')
-start = State((0,)*len(capacities), capacities)
 
-visited = set()
-
-solution = -1
-max_iterations = 10000
-count = 0
-
-pq = PriorityQueue()
-pq.put((0, start))
-while not pq.empty():
-    count += 1
-    if count >= max_iterations:
-        break
-    state = pq.get()[1]
-    print(f"state: {state}")
-    if is_goal(state, target):
-        print(f"Found: {state}")
-        solution = state.cost
-        break
-    for st in state.get_child_states():
-        if not st.state in visited:
-            visited.add(st.state)
-            h = simple_heuristic(st.state, target)
-            cost = h + st.cost
-            pq.put((cost, st))
-    visited.add(state.state)
-    
-    
-print(solution)
-
+if __name__ == "__main__":
+    file = None
+    if len(sys.argv) > 1:
+        file = sys.argv[1]
+    if file is not None:
+        capacities, target = parse_file(file)
+        s = Search(capacities, simple_heuristic)
+        print("Searching...")
+        result = s.search(max_iterations=100000)
+        print(result)
 

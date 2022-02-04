@@ -1,0 +1,29 @@
+"""
+Best-First-Search(Graph g, Node start)
+    1) Create an empty PriorityQueue
+       PriorityQueue pq;
+    2) Insert "start" in pq.
+       pq.insert(start)
+    3) Until PriorityQueue is empty
+          u = PriorityQueue.DeleteMin
+          If u is the goal
+             Exit
+          Else
+             Foreach neighbor v of u
+                If v "Unvisited"
+                    Mark v "Visited"                    
+                    pq.insert(v)
+             Mark u "Examined"                    
+End procedure
+"""
+"""
+if (target - binf) < 0, that means that the infinite bucket has more than the desired quantity. The best case scenario is that there is 1 bucket that has exactly enough space left for the excess, so h = 1.
+
+We could also make that a little smarter and check if there is at least one jug with enough capacity, and if not, then h = 2 since we need to at least dump some water out from the other jugs
+
+The basic example is if (target - binf) > 0, then the best case is that one bucket contains exactly the amount needed, so h = 1
+
+We could make that a little smarter by saying the h = size of the smallest subset of buckets whose sum is > 0 but <= (target - binf).
+
+That would still be admissible
+"""
