@@ -5,6 +5,7 @@ from queue import PriorityQueue
 import sys
 from time import time
 from typing import List, Tuple, Callable
+import heapq
 
 from heuristics import simple_heuristic, largest_bucket_first_heuristic, complicated_heuristic
 from states import get_child_states
@@ -114,21 +115,21 @@ class Search:
         self.capacities = capacities
         self.heuristic = heuristic
         self.visited = set()
-        self.pq = PriorityQueue()
-        self.pq.put((0, State((0,)*len(capacities), self.capacities)))
+        self.pq = []
+        heapq.heappush(self.pq, (0, State((0,)*len(capacities), self.capacities)))
         self.largest_capacity = capacities[len(capacities) - 2]
 
     def search(self, timeout=None, max_iterations=None):
         solution = -1
         start = time()
         iter_count = 0
-        while not self.pq.empty():
+        while self.pq:
             iter_count += 1
             if timeout and time() - start > timeout:
                 break
             if max_iterations and iter_count > max_iterations:
                 break
-            state = self.pq.get()[1]
+            state = heapq.heappop(self.pq)[1]
             # print(f"state: {state}")
             if is_goal(state, target):
                 print(f"Found: {state.path}")
@@ -139,7 +140,7 @@ class Search:
                     self.visited.add(st.state)
                     h = self.heuristic(st.state, state.state, self.capacities, self.largest_capacity, target)
                     cost = h + st.cost
-                    self.pq.put((cost, st))
+                    heapq.heappush(self.pq, (cost, st))
             self.visited.add(state.state)
         print(f"Time: {str(time() - start)}s")
         return solution
