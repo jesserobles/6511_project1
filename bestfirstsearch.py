@@ -129,7 +129,7 @@ class Search:
             if max_iterations and iter_count > max_iterations:
                 break
             state = self.pq.get()[1]
-            # print(f"state: {state}")
+            print(f"state: {state}")
             if is_goal(state, target):
                 print(f"Found: {state.path}")
                 solution = state.cost
