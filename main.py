@@ -1,6 +1,9 @@
+import time
+
 states = {}
 target = 0
 lowest_cost = None
+bucket_fill_cost = 1
 
 
 def run(t):
@@ -58,7 +61,7 @@ def search(inf_bucket_volume, steps):
             {
                 "value": state['value'],
                 "heuristic": heuristic,
-                "cost": state['cost']
+                "cost": state['cost'] + bucket_fill_cost  # Include cost of filling bucket from water source
             }
         )
 
@@ -70,27 +73,18 @@ def search(inf_bucket_volume, steps):
             cost = steps + mapping['cost']
             if lowest_cost is None or cost < lowest_cost:
                 lowest_cost = cost
-            continue
+            return
         else:  # Branch a new set of child leaves and continue to approach goal
             if lowest_cost is None or (steps + mapping['cost']) < lowest_cost:
                 search(inf_bucket_volume + mapping['value'], steps + mapping['cost'])
 
-
 t = 1
-print("Target: "+str(t)+", Buckets: 2,5")
-run(t)
-t = 2
-print("Target: "+str(t)+", Buckets: 2,5")
-run(t)
-t = 3
-print("Target: "+str(t)+", Buckets: 2,5")
-run(t)
-t = 4
-print("Target: "+str(t)+", Buckets: 2,5")
-run(t)
-t = 5
-print("Target: "+str(t)+", Buckets: 2,5")
-run(t)
-t = 8
-print("Target: "+str(t)+", Buckets: 2,5")
-run(t)
+while t < 9:
+    print("########## START RUN #############")
+    print("Target: "+str(t)+", Buckets: 2,5")
+    start = time.time()
+    run(t)
+    end = time.time()
+    print("Time: "+str(end - start)+"s")
+    print("########## END RUN #############")
+    t+=1
