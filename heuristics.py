@@ -5,6 +5,10 @@ from operator import itemgetter
 def simple_heuristic(state: Tuple[int], capacities: Tuple[int], target: int) -> int:
     return abs(state[-1] - target)
 
+
+def largest_bucket_first_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
+    return abs(target - state[-1])//largest_capacity * 2 - 1
+
 def complicated_heuristic(state: Tuple[int], target: int) -> int:
     target_bucket_current = state[-1]
     delta = target - target_bucket_current
