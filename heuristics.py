@@ -3,12 +3,13 @@ from typing import Tuple
 import itertools
 from operator import itemgetter
 
-def simple_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
+def simple_heuristic(state: Tuple[int], parent_state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
     return abs(state[-1] - target)
 
 
-def largest_bucket_first_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
-    delta = target - state[-1]
+def largest_bucket_first_heuristic(state: Tuple[int], parent_state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
+    delta = target - parent_state[-1]
+
     bucket_fills_required_to_repeat_state = 0
     volumetric_potential_of_current_state = 0
     capacity_closest_to_delta = capacities[-2]  # Start with 2nd to last bucket since that is biggest
@@ -22,15 +23,24 @@ def largest_bucket_first_heuristic(state: Tuple[int], capacities: Tuple[int], la
             bucket_fills_required_to_repeat_state += 1
             volumetric_potential_of_current_state += bucket
 
-    steps_required_to_repeat_state = bucket_fills_required_to_repeat_state * 2  # Fill step + pour step
+        i += 1
+
+    steps_required_to_repeat_state = bucket_fills_required_to_repeat_state * 2 - 1
 
     # Special case where last step we poured the only full bucket into the target bucket
     if volumetric_potential_of_current_state == 0:
         volumetric_potential_of_current_state = capacity_closest_to_delta
         bucket_fills_required_to_repeat_state = 1
-        steps_required_to_repeat_state = bucket_fills_required_to_repeat_state * 2 + 1  # Extra step required to fill
+        steps_required_to_repeat_state = bucket_fills_required_to_repeat_state * 2 # Extra step required to fill
 
     h = math.floor(abs(delta)/volumetric_potential_of_current_state * steps_required_to_repeat_state)
+
+    # Case where pouring this bucket into INF would go over our target.
+    # Switch to BFS since our largest bucket first algorithm is no longer useful at this point
+    # This keeps the heuristic admissable
+    if volumetric_potential_of_current_state > abs(delta):
+        h = 1
+
     return h
 
 

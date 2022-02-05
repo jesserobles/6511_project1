@@ -26,7 +26,7 @@ def get_max_subset(numbers, target):
     index, element = max(enumerate(map(sum, subsets)), key=itemgetter(0))
     return subsets[index]
 
-def h(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
+def h(state: Tuple[int], parent_state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
     bt = state[-1]
     delta = target - bt
     water_available = sum(state[:-1])
@@ -137,7 +137,7 @@ class Search:
             for st in state.get_child_states():
                 if not st.state in self.visited:
                     self.visited.add(st.state)
-                    h = self.heuristic(st.state, self.capacities, self.largest_capacity, target)
+                    h = self.heuristic(st.state, state.state, self.capacities, self.largest_capacity, target)
                     cost = h + st.cost
                     self.pq.put((cost, st))
             self.visited.add(state.state)
