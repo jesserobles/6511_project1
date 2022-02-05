@@ -6,7 +6,7 @@ import sys
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import simple_heuristic, complicated_heuristic
+from heuristics import simple_heuristic, largest_bucket_first_heuristic, complicated_heuristic
 from states import get_child_states
 
 def bfs(*args):
@@ -140,6 +140,7 @@ class Search:
                     cost = h + st.cost
                     self.pq.put((cost, st))
             self.visited.add(state.state)
+        print(f"Time: {str(time() - start)}s")
         return solution
 
 
@@ -149,8 +150,8 @@ if __name__ == "__main__":
         file = sys.argv[1]
     if file is not None:
         capacities, target = parse_file(file)
-        s = Search(capacities, simple_heuristic)
+        s = Search(capacities, largest_bucket_first_heuristic)
         print("Searching...")
-        result = s.search(max_iterations=100000)
+        result = s.search(max_iterations=300000)
         print(result)
 
