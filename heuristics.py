@@ -8,7 +8,7 @@ def simple_heuristic(state: Tuple[int], parent_state: Tuple[int], capacities: Tu
 
 
 def largest_bucket_first_heuristic(state: Tuple[int], parent_state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
-    delta = target - parent_state[-1]
+    delta = target - state[-1]
 
     bucket_fills_required_to_repeat_state = 0
     volumetric_potential_of_current_state = 0
@@ -33,15 +33,9 @@ def largest_bucket_first_heuristic(state: Tuple[int], parent_state: Tuple[int], 
         bucket_fills_required_to_repeat_state = 1
         steps_required_to_repeat_state = bucket_fills_required_to_repeat_state * 2 # Extra step required to fill
 
-    h = math.floor(abs(delta)/volumetric_potential_of_current_state * steps_required_to_repeat_state)
+    h = abs(delta)/volumetric_potential_of_current_state * steps_required_to_repeat_state
 
-    # Case where pouring this bucket into INF would go over our target.
-    # Switch to BFS since our largest bucket first algorithm is no longer useful at this point
-    # This keeps the heuristic admissable
-    if volumetric_potential_of_current_state > abs(delta):
-        h = 1
-
-    return h
+    return max(h, 1)
 
 
 
