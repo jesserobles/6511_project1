@@ -8,13 +8,7 @@ def simple_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity
 
 
 def largest_bucket_first_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
-    delta = target - state[-1]
-
-    if delta > - largest_capacity:
-        return math.floor(abs(delta)/largest_capacity) * 2 - 1
-    else:
-        # Switch to simple heuristic
-        return abs(state[-1] - target)
+    return math.floor(abs(target - state[-1])/largest_capacity) * 2 - 1
 
 
 def complicated_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
