@@ -3,31 +3,20 @@ from typing import Tuple
 import itertools
 from operator import itemgetter
 
-def simple_heuristic(state: Tuple[int], capacities: Tuple[int], target: int) -> int:
+def simple_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
     return abs(state[-1] - target)
 
 
-def largest_bucket_first_heuristic(state: Tuple[int], capacities: Tuple[int], target: int) -> int:
-    target_bucket_current = state[-1]
-    delta = target - target_bucket_current
+def largest_bucket_first_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
+    delta = target - state[-1]
 
-    if delta > 0:
-        biggest_bucket_under_delta = None
-        # Find capacity that is closest to delta without going over
-        for capacity in capacities[::-1]:
-            if capacity is not None and capacity < delta:
-                biggest_bucket_under_delta = capacity
-                break
-
-        if biggest_bucket_under_delta is not None:
-            return abs(math.floor(delta/biggest_bucket_under_delta)) * 2 - 1
-        else:
-            return 1
+    if delta > - largest_capacity:
+        return math.floor(abs(delta)/largest_capacity) * 2 - 1
     else:
         return 1
 
 
-def complicated_heuristic(state: Tuple[int], capacities: Tuple[int], target: int) -> int:
+def complicated_heuristic(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
     target_bucket_current = state[-1]
     delta = target - target_bucket_current
     if delta == 0: # This means we're at the solution, break early
@@ -42,25 +31,4 @@ def complicated_heuristic(state: Tuple[int], capacities: Tuple[int], target: int
             return abs(sum(element) - delta) * len(element) + 1
     return abs(state[-1] - target)
 
-def h(state: Tuple[int], target: int) -> int:
-    global capacities
-    bt = state[-1]
-    delta = target - bt
-    water_available = sum(state[:-1])
-    if delta == 0:
-        return 0
-    if delta > water_available:
-        # The water needed exceeds the amount available in the non-infinite buckets.
-        # then the best case is that a we can pour a bucket to bt, refill a bucket, and pour to bt
-        # return 3
-        if water_available > 0:
-            return target//max(capacities)
-        else:
-            return 3
-    if delta < 0: 
-        # The target bucket is above the value.
-        # Best case is that a bucket has the correct amount missing and we pour the infinite bucket back
-        return 1
-    target//max(capacities)
-    raise ValueError(f"Case unaccounted for: {delta}")
 

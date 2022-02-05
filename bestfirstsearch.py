@@ -26,7 +26,7 @@ def get_max_subset(numbers, target):
     index, element = max(enumerate(map(sum, subsets)), key=itemgetter(0))
     return subsets[index]
 
-def h(state: Tuple[int], capacities: Tuple[int], target: int) -> int:
+def h(state: Tuple[int], capacities: Tuple[int], largest_capacity: int, target: int) -> int:
     bt = state[-1]
     delta = target - bt
     water_available = sum(state[:-1])
@@ -67,7 +67,7 @@ def closest(lst, k):
 
 def is_goal(state, target):
     return state.state[-1] == target
-    # return simple_heuristic(state.state, target) == 0
+
 
 def parse_file(filename):
     with open(filename, "r") as file:
@@ -116,6 +116,7 @@ class Search:
         self.visited = set()
         self.pq = PriorityQueue()
         self.pq.put((0, State((0,)*len(capacities), self.capacities)))
+        self.largest_capacity = capacities[len(capacities) - 2]
 
     def search(self, timeout=None, max_iterations=None):
         solution = -1
@@ -136,7 +137,7 @@ class Search:
             for st in state.get_child_states():
                 if not st.state in self.visited:
                     self.visited.add(st.state)
-                    h = self.heuristic(st.state, self.capacities, target)
+                    h = self.heuristic(st.state, self.capacities, self.largest_capacity, target)
                     cost = h + st.cost
                     self.pq.put((cost, st))
             self.visited.add(state.state)
