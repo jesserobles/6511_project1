@@ -6,13 +6,10 @@ import sys
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import largest_bucket_first_heuristic
+from heuristics import largest_bucket_first_heuristic, h, simple_heuristic
 from states import get_child_states
 
-def bfs(state, capacities, target):
-    if state[-1] == target:
-        return 0
-    return 1
+
 
 def subset_sum(numbers, target):
     result = [seq for i in range(len(numbers), 0, -1)
@@ -28,34 +25,6 @@ def get_max_subset(numbers, target):
     index, element = max(enumerate(map(sum, subsets)), key=itemgetter(0))
     return subsets[index]
 
-def h(state: Tuple[int], capacities: Tuple[int], target: int) -> int:
-    bt = state[-1]
-    delta = target - bt
-    water_available = sum(state[:-1])
-    if delta == 0: # Solution
-        return 0
-    if delta < 0: 
-        # The target bucket is above the value.
-        # Best case is that a bucket has the correct amount missing and we pour the infinite bucket back
-        # But a smarter approach is to check if any value has such capacity. If not, then
-        # we need at least 2 pours: 1 to empty a destination bucket, and another from
-        # the infinite bucket to the destination.
-        if all([cap - st != delta for cap, st in zip(capacities[:-1], state[:-1])]):
-            return 2
-        return 1
-    if delta > water_available:
-        # The water needed exceeds the amount available in the non-infinite buckets.
-        # then the best case is that a we can pour a bucket to bt, refill a bucket, and pour to bt
-        return 3
-    # Default case is when there is water available to fill the bucket.
-    # Best case is that there is a single bucket with exactly the amount needed.
-    # A smarter approach is 
-    max_subset = get_max_subset(state[:-1], delta)
-    if max_subset:
-        print(f"State: {state}, Used subset {max_subset}")
-        result = max(len(max_subset), 1)
-        return result
-    return 1
 
 def closest(lst, k):
     highest_value = 0
@@ -69,7 +38,6 @@ def closest(lst, k):
 
 def is_goal(state, target):
     return state.state[-1] == target
-    # return simple_heuristic(state.state, target) == 0
 
 def parse_file(filename):
     with open(filename, "r") as file:
@@ -121,6 +89,7 @@ class Search:
         heapq.heappush(self.pq, (0, State((0,)*len(capacities), self.capacities)))
         self.solution_state = None
         self.time_elapsed = 0
+        self.timedout = False
 
     def __repr__(self) -> str:
         return f"<Search{self.solution_state or ''}>"
@@ -144,6 +113,7 @@ class Search:
             iter_count += 1
             if timeout and time() - start > timeout:
                 self.time_elapsed = time() - start
+                self.timedout = True
                 break
             if max_iterations and iter_count > max_iterations:
                 self.time_elapsed = time() - start
@@ -204,6 +174,8 @@ if __name__ == "__main__":
         for file in glob.glob('*.txt'):
             s = Search.from_file(file, heuristic=largest_bucket_first_heuristic)
             result = s.search(timeout=30)
+            if s.timedout:
+                s.search(heuristic=simple_heuristic, timeout=10)
             results[file] = result
             print(f"Result: {result}")
             print(f"Time elapsed: {s.time_elapsed}")
