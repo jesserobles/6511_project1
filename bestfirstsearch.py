@@ -6,7 +6,7 @@ import sys
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import largest_bucket_first_heuristic, largest_bucket_first_heuristic2
+from heuristics import largest_bucket_first_heuristic
 from states import get_child_states
 
 def bfs(state, capacities, target):
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     if file is not None:
         print("Searching...")
         s = Search.from_file(file)
-        result = s.search(heuristic=largest_bucket_first_heuristic2)
+        result = s.search(heuristic=largest_bucket_first_heuristic)
         print(result)
         print(f"Took: {s.time_elapsed}")
     else:
