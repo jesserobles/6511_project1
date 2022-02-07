@@ -6,7 +6,7 @@ import sys
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import largest_bucket_first_heuristic, h, simple_heuristic
+from heuristics import largest_bucket_first_heuristic, h2, simple_heuristic, largest_bucket_first_heuristic2
 from states import get_child_states
 
 
@@ -108,7 +108,6 @@ class Search:
         solution = -1
         start = time()
         iter_count = 0
-        # while not self.pq.empty():
         while self.pq:
             iter_count += 1
             if timeout and time() - start > timeout:
@@ -118,7 +117,6 @@ class Search:
             if max_iterations and iter_count > max_iterations:
                 self.time_elapsed = time() - start
                 break
-            # state = self.pq.get()[1]
             state = heapq.heappop(self.pq)[1]
             if is_goal(state, target):
                 print(f"Found a solution: {state.path + [state.state]}")
@@ -168,7 +166,7 @@ if __name__ == "__main__":
         s = Search.from_file(file)
         result = s.search(heuristic=largest_bucket_first_heuristic)
         print(result)
-        print(f"Took: {s.time_elapsed}")
+        print(f"Time elapsed: {timedelta(seconds=s.time_elapsed)}")
     else:
         results = {}
         for file in glob.glob('*.txt'):
@@ -178,6 +176,6 @@ if __name__ == "__main__":
                 s.search(heuristic=simple_heuristic, timeout=10)
             results[file] = result
             print(f"Result: {result}")
-            print(f"Time elapsed: {s.time_elapsed}")
+            print(f"Time elapsed: {timedelta(seconds=s.time_elapsed)}")
         print(results)
 
