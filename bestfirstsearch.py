@@ -6,7 +6,7 @@ import sys
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import largest_bucket_first_heuristic, h2, simple_heuristic, largest_bucket_first_heuristic2
+from heuristics import largest_bucket_first_heuristic, simple_heuristic, largest_bucket_first_heuristic3
 from states import get_child_states
 
 
@@ -90,6 +90,7 @@ class Search:
         self.solution_state = None
         self.time_elapsed = 0
         self.timedout = False
+        self.shortest_path = None
 
     def __repr__(self) -> str:
         return f"<Search{self.solution_state or ''}>"
@@ -101,10 +102,13 @@ class Search:
             raise AttributeError("No heuristic specified. Pass the `heuristic` argument to the search method.")
         if heuristic is None:
             heuristic = self.heuristic
+        elif self.heuristic is None:
+            self.heuristic = heuristic
         target = target or self.target
-        print(f"Capacities: {self.capacities[:-1]}")
-        print(f"Target: {target}")
-        print(f"Heuristic: {heuristic.__name__}")
+        if __name__ == "__main__":
+            print(f"Capacities: {self.capacities[:-1]}")
+            print(f"Target: {target}")
+            print(f"Heuristic: {heuristic.__name__}")
         solution = -1
         start = time()
         iter_count = 0
@@ -119,7 +123,8 @@ class Search:
                 break
             state = heapq.heappop(self.pq)[1]
             if is_goal(state, target):
-                print(f"Found a solution: {state.path + [state.state]}")
+                if __name__ == "__main__":
+                    print(f"Found a solution: {state.path + [state.state]}")
                 solution = state.cost
                 self.solution_state = state
                 self.time_elapsed = time() - start
@@ -135,6 +140,7 @@ class Search:
             self.visited.add(state.state)
         if solution != -1:
             self.check_admissibility(self.solution_state, heuristic, solution)
+        self.shortest_path = solution
         return solution
     
     @classmethod
@@ -144,16 +150,21 @@ class Search:
 
     def check_admissibility(self, state, heuristic, solution):
         if heuristic(state.state, self.capacities, self.target) != 0: # Obvious case
-            print("WARNING: Heuristic is not admissible")
-            return
+            if __name__ == "__main__":
+                print("WARNING: Heuristic is not admissible")
+            return False
         for st in state.path:
             value = heuristic(st, self.capacities, self.target)
             if value > solution:
-                print("WARNING: Heuristic is not admissible")
-                break
-        else:
+                if __name__ == "__main__":
+                    print("WARNING: Heuristic is not admissible")
+                return False
+        if __name__ == "__main__":
             print("Heuristic seems admissible")
-
+        return True
+        
+    def h_is_admissible(self):
+        return self.check_admissibility(self.solution_state, self.heuristic, self.shortest_path)
 
 
 if __name__ == "__main__":
