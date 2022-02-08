@@ -1,7 +1,7 @@
 import unittest
 
 import bestfirstsearch
-from heuristics import largest_bucket_first_heuristic, largest_bucket_first_heuristic2, simple_heuristic
+from heuristics import h_admissible, largest_bucket_first_heuristic, simple_heuristic
 from states import get_child_states
 
 
@@ -38,8 +38,9 @@ class FileTest(unittest.TestCase):
         # solution exists
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input.txt')
-            result = s.search(heuristic=largest_bucket_first_heuristic)
+            s = bestfirstsearch.Search.from_file('input.txt', heuristic=h_admissible)
+            s.print_problem()
+            result = s.search()
             self.assertEqual(result, 19, "Should be 19")
             self.assertTrue(s.h_is_admissible(), "Heuristic not admissible")
         else:
@@ -49,8 +50,9 @@ class FileTest(unittest.TestCase):
         s = bestfirstsearch.Search.from_file('input1.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input1.txt')
-            result = s.search(heuristic=largest_bucket_first_heuristic)
+            s = bestfirstsearch.Search.from_file('input1.txt', heuristic=h_admissible)
+            s.print_problem()
+            result = s.search()
             self.assertEqual(result, 7, "Should be 7")
             self.assertTrue(s.h_is_admissible(), "Heuristic not admissible")
         else:
@@ -60,10 +62,12 @@ class FileTest(unittest.TestCase):
         s = bestfirstsearch.Search.from_file('input2.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input2.txt')
-            result = s.search(heuristic=largest_bucket_first_heuristic)
+            s = bestfirstsearch.Search.from_file('input2.txt', heuristic=h_admissible)
+            s.print_problem()
+            result = s.search()
             self.assertEqual(result, -1, "Should be no solution")
         else:
+            print("No solution exists")
             self.assertEqual(result,-1, "Should be no solution")
 
     def test_3(self):
@@ -72,14 +76,16 @@ class FileTest(unittest.TestCase):
         if not s.timedout:
             raise AttributeError("This problem shouldn't have a solution")
         else:
+            print("No solution exists")
             self.assertEqual(result, -1, "Should be no solution")
 
     def test_4(self):
         s = bestfirstsearch.Search.from_file('input4.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input4.txt')
-            result = s.search(heuristic=largest_bucket_first_heuristic2)
+            s = bestfirstsearch.Search.from_file('input4.txt', heuristic=largest_bucket_first_heuristic)
+            s.print_problem()
+            result = s.search()
             self.assertEqual(result, 36, "Should be 36")
             self.assertTrue(s.h_is_admissible(), "Heuristic not admissible")
         else:
@@ -89,8 +95,9 @@ class FileTest(unittest.TestCase):
         s = bestfirstsearch.Search.from_file('input5.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input5.txt')
-            result = s.search(heuristic=largest_bucket_first_heuristic)
+            s = bestfirstsearch.Search.from_file('input5.txt', heuristic=h_admissible)
+            s.print_problem()
+            result = s.search()
             self.assertEqual(result, 5, "Should be 5")
             self.assertTrue(s.h_is_admissible(), "Heuristic not admissible")
         else:

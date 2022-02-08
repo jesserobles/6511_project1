@@ -1,3 +1,4 @@
+from ast import arg
 from datetime import timedelta
 import itertools
 from operator import itemgetter
@@ -6,7 +7,7 @@ import sys
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import largest_bucket_first_heuristic, simple_heuristic, largest_bucket_first_heuristic3
+from heuristics import h_admissible, largest_pitcher_first_heuristic, simple_heuristic
 from states import get_child_states
 
 
@@ -105,10 +106,6 @@ class Search:
         elif self.heuristic is None:
             self.heuristic = heuristic
         target = target or self.target
-        if __name__ == "__main__":
-            print(f"Capacities: {self.capacities[:-1]}")
-            print(f"Target: {target}")
-            print(f"Heuristic: {heuristic.__name__}")
         solution = -1
         start = time()
         iter_count = 0
@@ -123,8 +120,6 @@ class Search:
                 break
             state = heapq.heappop(self.pq)[1]
             if is_goal(state, target):
-                if __name__ == "__main__":
-                    print(f"Found a solution: {state.path + [state.state]}")
                 solution = state.cost
                 self.solution_state = state
                 self.time_elapsed = time() - start
@@ -166,29 +161,57 @@ class Search:
         
     def h_is_admissible(self):
         return self.check_admissibility(self.solution_state, self.heuristic, self.shortest_path)
+    
+    def print_problem(self):
+        print('='*18)
+        print(f"Capacities: {self.capacities[:-1]}")
+        print(f"Target: {self.target}")
+        print(f"Heuristic: {self.heuristic.__name__} -> {self.heuristic.__doc__}")
+        print('='*18)
+        print()
 
 
 if __name__ == "__main__":
+    import argparse
     import glob
-    file = None
-    if len(sys.argv) > 1:
-        file = sys.argv[1]
-    if file is not None:
+
+    parser = argparse.ArgumentParser(description="Water pitcher search solver.")
+
+    parser.add_argument('file',
+                    help='File with pitcher capacities in first line (comma separated) and target in second line.',
+                    default='*')
+    parser.add_argument('-hn', '--heuristic',
+                    choices=['default', 'lpf', 'simple'],
+                    help="Heuristic",
+                    default="default")
+    args = parser.parse_args()
+
+    heuristics = {
+        "default": h_admissible,
+        "lpf": largest_pitcher_first_heuristic,
+        "simple": simple_heuristic
+    }
+
+    file = args.file
+    heuristic = heuristics.get(args.heuristic, "default")
+    if file != '*':
         print("Searching...")
-        s = Search.from_file(file)
+        s = Search.from_file(file, heuristic=simple_heuristic)
         # See if a solution exists
-        s.search(heuristic=simple_heuristic, timeout=3, check_admissible=False)
+        s.search(timeout=3, check_admissible=False)
         if s.timedout:
             print(-1)
             exit()
-        s = Search.from_file(file)
-        result = s.search(heuristic=largest_bucket_first_heuristic3)
-        print(result)
+        s = Search.from_file(file, heuristic=heuristic)
+        s.print_problem()
+        result = s.search()
+        print(f"Shortest Path = {result}")
         print(f"Time elapsed: {timedelta(seconds=s.time_elapsed)}")
     else:
         results = {}
         for file in glob.glob('*.txt'):
-            s = Search.from_file(file, heuristic=largest_bucket_first_heuristic)
+            s = Search.from_file(file, heuristic=heuristic)
+            s.print_problem()
             result = s.search(timeout=30)
             if s.timedout:
                 s.search(heuristic=simple_heuristic, timeout=10)
