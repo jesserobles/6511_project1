@@ -12,7 +12,7 @@ for file in glob.glob('*.txt'):
     heuristic = largest_pitcher_first_heuristic if "input4" in file else h_admissible
     s = Search.from_file(file, heuristic=heuristic)
     s.print_problem()
-    result = s.search(timeout=0.8)
+    result = s.search(timeout=30)
     if s.timedout:
         print("result = -1")
         results[file] = -1
