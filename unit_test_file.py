@@ -1,7 +1,7 @@
 import unittest
 
 import bestfirstsearch
-from heuristics import h_admissible, largest_bucket_first_heuristic, simple_heuristic
+from heuristics import h_admissible, largest_pitcher_first_heuristic, simple_heuristic
 from states import get_child_states
 
 
@@ -83,7 +83,7 @@ class FileTest(unittest.TestCase):
         s = bestfirstsearch.Search.from_file('input4.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input4.txt', heuristic=largest_bucket_first_heuristic)
+            s = bestfirstsearch.Search.from_file('input4.txt', heuristic=largest_pitcher_first_heuristic)
             s.print_problem()
             result = s.search()
             self.assertEqual(result, 36, "Should be 36")

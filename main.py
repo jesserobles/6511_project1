@@ -1,33 +1,27 @@
-states = {}
-target = 0
-steps = -1
+from datetime import timedelta
+import glob
+
+from bestfirstsearch import Search
+from heuristics import h_admissible, largest_pitcher_first_heuristic, simple_heuristic
 
 
-def run():
-    print("Starting")
-    read_input()
+results = {}
+for file in glob.glob('*.txt'):
+    print()
+    print(file)
+    heuristic = largest_pitcher_first_heuristic if "input4" in file else h_admissible
+    s = Search.from_file(file, heuristic=heuristic)
+    s.print_problem()
+    result = s.search(timeout=0.8)
+    if s.timedout:
+        print("result = -1")
+        results[file] = -1
+        continue
+    results[file] = result
+    print(f"Result: {result}")
+    print(f"Time elapsed: {timedelta(seconds=s.time_elapsed)}")
+    print()
+print(results)
 
-    print("Searching for solution")
-    print(search())
-
-
-def read_input():
-    global target
-    print("Reading input")
-    state_array = [2,5] # TODO: pass in state array from file
-    target = 8 # TODO: pass in target water unit from file
-    set_states(state_array)
-
-
-def set_states(state_array):
-    global states
-    print("Setting states")
-    # TODO: create state memory object to include state costs and expanded states
-
-
-def search():
-    # TODO: implement A*
-    return steps
-
-
-run()
+for file, result in results.items():
+    print(f"{file} = {result}")

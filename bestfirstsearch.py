@@ -12,31 +12,6 @@ from states import get_child_states
 
 
 
-def subset_sum(numbers, target):
-    result = [seq for i in range(len(numbers), 0, -1)
-          for seq in itertools.combinations(numbers, i)
-          if not 0 in seq and sum(seq) <= target]
-    
-    return result
-
-def get_max_subset(numbers, target):
-    subsets = subset_sum(numbers, target)
-    if not subsets:
-        return None
-    index, element = max(enumerate(map(sum, subsets)), key=itemgetter(0))
-    return subsets[index]
-
-
-def closest(lst, k):
-    highest_value = 0
-    highest_index = -1
-    for ix, item in enumerate(lst):
-        if item > k:
-            continue
-        if item > highest_value:
-            highest_index = ix
-    return lst[highest_index]
-
 def is_goal(state, target):
     return state.state[-1] == target
 
@@ -47,7 +22,6 @@ def parse_file(filename):
     buckets = [int(b) for b in buckets.split(",")]
     target = int(target)
     return tuple(buckets + [None]), target
-
 
 class State:
     def __init__(self, state: Tuple[int], capacities: Tuple[int], path: List=None) -> None:
