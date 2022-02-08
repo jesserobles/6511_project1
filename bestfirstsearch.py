@@ -95,7 +95,7 @@ class Search:
     def __repr__(self) -> str:
         return f"<Search{self.solution_state or ''}>"
         
-    def search(self, heuristic=None, target=None, timeout=None, max_iterations=None):
+    def search(self, heuristic=None, target=None, timeout=None, max_iterations=None, check_admissible=True):
         if self.target is None and target is None :
             raise AttributeError("No target value specified. Pass the `target` argument to the search method.")
         if self.heuristic is None and heuristic is None:
@@ -131,14 +131,14 @@ class Search:
                 break
             for st in state.get_child_states():
                 if not st.state in self.visited:
-                    if is_goal(state, target):
+                    if is_goal(state, target) and check_admissible:
                         self.check_admissibility(state, heuristic, st.cost)
                     self.visited.add(st.state)
                     h = heuristic(st.state, self.capacities, target)
                     cost = h + st.cost
                     heapq.heappush(self.pq, (cost, st))
             self.visited.add(state.state)
-        if solution != -1:
+        if solution != -1 and check_admissible:
             self.check_admissibility(self.solution_state, heuristic, solution)
         self.shortest_path = solution
         return solution
@@ -157,7 +157,8 @@ class Search:
             value = heuristic(st, self.capacities, self.target)
             if value > solution:
                 if __name__ == "__main__":
-                    print("WARNING: Heuristic is not admissible")
+                    print("WARNING: Heuristic is not admissible: ")
+                    print(state, solution)
                 return False
         if __name__ == "__main__":
             print("Heuristic seems admissible")
@@ -175,7 +176,13 @@ if __name__ == "__main__":
     if file is not None:
         print("Searching...")
         s = Search.from_file(file)
-        result = s.search(heuristic=largest_bucket_first_heuristic)
+        # See if a solution exists
+        s.search(heuristic=simple_heuristic, timeout=3, check_admissible=False)
+        if s.timedout:
+            print(-1)
+            exit()
+        s = Search.from_file(file)
+        result = s.search(heuristic=largest_bucket_first_heuristic3)
         print(result)
         print(f"Time elapsed: {timedelta(seconds=s.time_elapsed)}")
     else:

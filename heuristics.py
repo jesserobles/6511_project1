@@ -94,8 +94,10 @@ def largest_bucket_first_heuristic3(state: Tuple[int], capacities: Tuple[int], t
             return 2
         return 1
     volumetric_potential_of_current_state = sum(state[:-1])
-    capacity_closest_to_delta = min(capacities[:-1], key=lambda x:abs(x-delta))
+    capacity_closest_to_delta = min(capacities[:-1], key=lambda x:abs(x-delta)) 
     if volumetric_potential_of_current_state > delta:
+        if any([s > delta for s in st]) or any([c >= delta for c in capacities[:-1]]): # Any single pitcher level or capacity > delta, need at least 2 pours
+            return 2
         # Find any combinations whose sum is >= delta
         subsets = [(sum(seq), len(seq), seq) for i in range(len(st), 0, -1)
           for seq in itertools.combinations(st, i)
