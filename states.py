@@ -5,23 +5,20 @@ def get_child_states(state: Tuple[int], capacities=Tuple[int]) -> List[Tuple[int
     child_states = []
     seen_child_states = {state}
     for ix, bx in enumerate(state):
-        # First, consider just filling the jars that have capacity left and emptying any buckets with any water
-        for i, bi in enumerate(state):
-            if bi != 0 or capacities[i] is None: # Bucket has water, so we can empty it
-                tmp_state = list(state)
-                tmp_state[i] = 0
-                tmp_state = tuple(tmp_state)
-                if not tmp_state in seen_child_states:
-                    seen_child_states.add(tmp_state)
-                    child_states.append(tmp_state)
-            if capacities[i] is not None and bi < capacities[i]: # The current bucket can be filled
-                tmp_state = list(state)
-                tmp_state[i] = capacities[i]
-                tmp_state = tuple(tmp_state)
-                if not tmp_state in seen_child_states:
-                    seen_child_states.add(tmp_state)
-                    child_states.append(tmp_state)
-        # Now we can loop through the other buckets, and apply the rules: dump from bx to by
+        if bx != 0 or capacities[ix] is None: # Bucket has water, so we can empty it
+            tmp_state = list(state)
+            tmp_state[ix] = 0
+            tmp_state = tuple(tmp_state)
+            if not tmp_state in seen_child_states:
+                seen_child_states.add(tmp_state)
+                child_states.append(tmp_state)
+        if capacities[ix] is not None and bx < capacities[ix]: # The current bucket can be filled
+            tmp_state = list(state)
+            tmp_state[ix] = capacities[ix]
+            tmp_state = tuple(tmp_state)
+            if not tmp_state in seen_child_states:
+                seen_child_states.add(tmp_state)
+                child_states.append(tmp_state)
         if bx == 0: # bx can't contribute to any other bucket, just skip it
             continue
         for iy, by in enumerate(state):

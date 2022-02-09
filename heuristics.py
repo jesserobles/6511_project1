@@ -2,6 +2,7 @@ from typing import Tuple
 import itertools
 
 def bfs(state, capacities, target):
+    """h = 0 if target, else 1"""
     if state[-1] == target:
         return 0
     return 1

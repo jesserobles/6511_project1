@@ -1,13 +1,9 @@
-from ast import arg
 from datetime import timedelta
-import itertools
-from operator import itemgetter
 import heapq
-import sys
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import h_admissible, largest_pitcher_first_heuristic, simple_heuristic
+from heuristics import bfs, h_admissible, largest_pitcher_first_heuristic, simple_heuristic
 from states import get_child_states
 
 
@@ -44,7 +40,7 @@ class State:
 
     def get_child_states(self, seen=set()):
         children = []
-        states = get_child_states(self._state, self. capacities)
+        states = get_child_states(self._state, self.capacities)
         for state in states:
             if state in seen:
                 continue
@@ -155,7 +151,7 @@ if __name__ == "__main__":
                     help='File with pitcher capacities in first line (comma separated) and target in second line.',
                     default='*')
     parser.add_argument('-hn', '--heuristic',
-                    choices=['default', 'lpf', 'simple'],
+                    choices=['default', 'lpf', 'simple', 'bfs'],
                     help="Heuristic",
                     default="default")
     args = parser.parse_args()
@@ -163,7 +159,8 @@ if __name__ == "__main__":
     heuristics = {
         "default": h_admissible,
         "lpf": largest_pitcher_first_heuristic,
-        "simple": simple_heuristic
+        "simple": simple_heuristic,
+        "bfs": bfs
     }
 
     file = args.file
