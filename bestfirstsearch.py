@@ -8,7 +8,6 @@ from states import get_child_states
 
 
 
-
 def is_goal(state, target):
     return state.state[-1] == target
 
