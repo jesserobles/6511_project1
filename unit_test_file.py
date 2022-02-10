@@ -59,8 +59,9 @@ class FileTest(unittest.TestCase):
             self.assertEqual(result,-1, "Should be no solution")
 
     def test_2(self):
-        s = bestfirstsearch.Search.from_file('input2.txt')
-        result = s.search(heuristic=simple_heuristic, timeout=5)
+        s = bestfirstsearch.Search.from_file('input2.txt', heuristic=simple_heuristic)
+        s.print_problem()
+        result = s.search(timeout=5)
         if not s.timedout:
             s = bestfirstsearch.Search.from_file('input2.txt', heuristic=h_admissible)
             s.print_problem()
@@ -71,8 +72,9 @@ class FileTest(unittest.TestCase):
             self.assertEqual(result,-1, "Should be no solution")
 
     def test_3(self):
-        s = bestfirstsearch.Search.from_file('input3.txt')
-        result = s.search(heuristic=simple_heuristic, timeout=5)
+        s = bestfirstsearch.Search.from_file('input3.txt', heuristic=simple_heuristic)
+        s.print_problem()
+        result = s.search(timeout=5)
         if not s.timedout:
             raise AttributeError("This problem shouldn't have a solution")
         else:
