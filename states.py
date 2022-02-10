@@ -21,10 +21,10 @@ def get_child_states(state: Tuple[int], capacities=Tuple[int]) -> List[Tuple[int
                 child_states.append(tmp_state)
         if bx == 0: # bx can't contribute to any other bucket, just skip it
             continue
-        calc_diff_pitcher_combos(state: Tuple[int], capacities=Tuple[int],  child_states, seen_child_states, ix, bx)
+        calc_diff_pitcher_combos(state, capacities,  child_states, seen_child_states, ix, bx)
     return child_states
 
-def calc_diff_pitcher_combos(state: Tuple[int], capacities=Tuple[int],  child_states, seen_child_states, ix, bx):
+def calc_diff_pitcher_combos(state, capacities,  child_states, seen_child_states, ix, bx):
     for iy, by in enumerate(state): 
             if ix == iy: # Don't consider pouring from the same bucket to itself.
                 continue
