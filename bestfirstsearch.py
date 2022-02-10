@@ -94,20 +94,13 @@ class Search:
                 self.solution_state = state
                 self.time_elapsed = time() - start
                 break
-            for st in state.get_child_states():
-                if not st.state in self.visited:
-                    if is_goal(state, target) and check_admissible:
-                        self.check_admissibility(state, heuristic, st.cost)
-                    self.visited.add(st.state)
-                    h = heuristic(st.state, self.capacities, target)
-                    cost = h + st.cost
-                    heapq.heappush(self.pq, (cost, st))
+            self.calc_child_states(heuristic, state, target, check_admissible)
             self.visited.add(state.state)
         if solution != -1 and check_admissible:
             self.check_admissibility(self.solution_state, heuristic, solution)
         self.shortest_path = solution
         return solution
-    
+
     @classmethod
     def from_file(cls, filename, heuristic=None):
         capacities, target = parse_file(filename)
@@ -128,6 +121,16 @@ class Search:
         if __name__ == "__main__":
             print("Heuristic seems admissible")
         return True
+
+    def calc_child_states(self, heuristic, state, target, check_admissible):
+        for st in state.get_child_states():
+            if not st.state in self.visited:
+                if is_goal(state, target) and check_admissible:
+                    self.check_admissibility(state, heuristic, st.cost)
+                self.visited.add(st.state)
+                h = heuristic(st.state, self.capacities, target)
+                cost = h + st.cost
+                heapq.heappush(self.pq, (cost, st))
         
     def h_is_admissible(self):
         return self.check_admissibility(self.solution_state, self.heuristic, self.shortest_path)
