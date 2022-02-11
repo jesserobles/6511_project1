@@ -1,7 +1,7 @@
 from datetime import timedelta
 import glob
 
-from bestfirstsearch import Search
+from informedsearch import Search
 from heuristics import h_admissible, largest_pitcher_first_heuristic, simple_heuristic
 
 
@@ -21,7 +21,6 @@ for file in glob.glob('*.txt'):
     print(f"Result: {result}")
     print(f"Time elapsed: {timedelta(seconds=s.time_elapsed)}")
     print()
-print(results)
 
 for file, result in results.items():
     print(f"{file} = {result}")

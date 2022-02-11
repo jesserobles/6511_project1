@@ -3,7 +3,7 @@ import heapq
 from time import time
 from typing import List, Tuple, Callable
 
-from heuristics import bfs, h_admissible, largest_pitcher_first_heuristic, simple_heuristic
+from heuristics import ucs, h_admissible, largest_pitcher_first_heuristic, simple_heuristic
 from states import get_child_states
 
 
@@ -154,7 +154,7 @@ if __name__ == "__main__":
                     help='File with pitcher capacities in first line (comma separated) and target in second line.',
                     default='*')
     parser.add_argument('-hn', '--heuristic',
-                    choices=['default', 'lpf', 'simple', 'bfs'],
+                    choices=['default', 'lpf', 'simple', 'ucs'],
                     help="Heuristic",
                     default="default")
     args = parser.parse_args()
@@ -163,7 +163,7 @@ if __name__ == "__main__":
         "default": h_admissible,
         "lpf": largest_pitcher_first_heuristic,
         "simple": simple_heuristic,
-        "bfs": bfs
+        "ucs": ucs
     }
 
     file = args.file

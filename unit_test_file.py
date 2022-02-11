@@ -1,6 +1,6 @@
 import unittest
 
-import bestfirstsearch
+import informedsearch
 from heuristics import h_admissible, largest_pitcher_first_heuristic, simple_heuristic
 from states import get_child_states
 
@@ -33,12 +33,12 @@ class StateGenerator(unittest.TestCase):
 class FileTest(unittest.TestCase):
 
     def test_0(self):
-        s = bestfirstsearch.Search.from_file('input.txt')
+        s = informedsearch.Search.from_file('input.txt')
         # First use non-admissible heuristic to check if a
         # solution exists
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input.txt', heuristic=h_admissible)
+            s = informedsearch.Search.from_file('input.txt', heuristic=h_admissible)
             s.print_problem()
             result = s.search()
             self.assertEqual(result, 19, "Should be 19")
@@ -47,10 +47,10 @@ class FileTest(unittest.TestCase):
             self.assertEqual(result,-1, "Should be no solution")
 
     def test_1(self):
-        s = bestfirstsearch.Search.from_file('input1.txt')
+        s = informedsearch.Search.from_file('input1.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input1.txt', heuristic=h_admissible)
+            s = informedsearch.Search.from_file('input1.txt', heuristic=h_admissible)
             s.print_problem()
             result = s.search()
             self.assertEqual(result, 7, "Should be 7")
@@ -59,11 +59,11 @@ class FileTest(unittest.TestCase):
             self.assertEqual(result,-1, "Should be no solution")
 
     def test_2(self):
-        s = bestfirstsearch.Search.from_file('input2.txt', heuristic=simple_heuristic)
+        s = informedsearch.Search.from_file('input2.txt', heuristic=simple_heuristic)
         s.print_problem()
         result = s.search(timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input2.txt', heuristic=h_admissible)
+            s = informedsearch.Search.from_file('input2.txt', heuristic=h_admissible)
             s.print_problem()
             result = s.search()
             self.assertEqual(result, -1, "Should be no solution")
@@ -72,7 +72,7 @@ class FileTest(unittest.TestCase):
             self.assertEqual(result,-1, "Should be no solution")
 
     def test_3(self):
-        s = bestfirstsearch.Search.from_file('input3.txt', heuristic=simple_heuristic)
+        s = informedsearch.Search.from_file('input3.txt', heuristic=simple_heuristic)
         s.print_problem()
         result = s.search(timeout=5)
         if not s.timedout:
@@ -82,10 +82,10 @@ class FileTest(unittest.TestCase):
             self.assertEqual(result, -1, "Should be no solution")
 
     def test_4(self):
-        s = bestfirstsearch.Search.from_file('input4.txt')
+        s = informedsearch.Search.from_file('input4.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input4.txt', heuristic=largest_pitcher_first_heuristic)
+            s = informedsearch.Search.from_file('input4.txt', heuristic=largest_pitcher_first_heuristic)
             s.print_problem()
             result = s.search()
             self.assertEqual(result, 36, "Should be 36")
@@ -94,10 +94,10 @@ class FileTest(unittest.TestCase):
             self.assertEqual(result, -1, "Should be no solution")
     
     def test_5(self):
-        s = bestfirstsearch.Search.from_file('input5.txt')
+        s = informedsearch.Search.from_file('input5.txt')
         result = s.search(heuristic=simple_heuristic, timeout=5)
         if not s.timedout:
-            s = bestfirstsearch.Search.from_file('input5.txt', heuristic=h_admissible)
+            s = informedsearch.Search.from_file('input5.txt', heuristic=h_admissible)
             s.print_problem()
             result = s.search()
             self.assertEqual(result, 5, "Should be 5")
